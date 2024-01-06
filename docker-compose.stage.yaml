@@ -1,0 +1,58 @@
+services:
+  stage_redis:
+    container_name: stage_redis
+    image: redis:alpine
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    ports:
+      - 6380:6379
+    networks:
+      - notsoeasy
+    volumes:
+      - ./volumes/redis/:/data
+
+  stage_auth:
+    container_name: stage_auth
+    build:
+      dockerfile: ./Dockerfile.stage
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    env_file:
+      - ./.env
+    networks:
+      - notsoeasy
+    depends_on:
+      - stage_redis
+    volumes:
+      - ./volumes/auth_data.db:/auth_data.db
+      - ./.env:/.env
+
+  caddy:
+    container_name: caddy_web_server
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      #- "443:443"
+      #- "443:443/udp"
+    depends_on:
+      - stage_auth
+    networks:
+      - notsoeasy
+    volumes:
+      - ./Caddyfile.dev:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    links:
+      - stage_auth
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  notsoeasy:
+    name: notsoeasy_network
+    #driver: bridge
+
