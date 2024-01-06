@@ -17,7 +17,7 @@ services:
       dockerfile: ./Dockerfile.stage
     restart: unless-stopped
     ports:
-      - 8081:8081
+      - 8080:8080
     env_file:
       - ./.env
     networks:
