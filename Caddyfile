@@ -1,4 +1,0 @@
-http://notsoeasy.ru {
-	reverse_proxy /* stage_auth:8080
-}
-

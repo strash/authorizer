@@ -20,3 +20,5 @@ certs/
 *-wal
 .idea
 *.iml
+volumes/auth_data.db
+volumes/redis/*.*
